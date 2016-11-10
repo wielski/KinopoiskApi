@@ -1,6 +1,9 @@
+package com.x1unix.avi.kp;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +14,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-// Interceptor for outcoming requests to kinopoisk API
+
 public class KinopoiskRequestInterceptor implements Interceptor {
 
     private final String KP_SECRET = "a17qbcw1du0aedm";
@@ -22,11 +25,21 @@ public class KinopoiskRequestInterceptor implements Interceptor {
 
         Request original = chain.request();
         HttpUrl originalHttpUrl = original.url();
+        URL oUrl = originalHttpUrl.url();
+
+        String commandName = originalHttpUrl.pathSegments().get(2);
+
+        // Build encoded key for query
+        String encodedKey = new String(
+                Hex.encodeHex(DigestUtils.md5(
+                        commandName + "?" + oUrl.getQuery() + "&uuid=" + KP_UUID + KP_SECRET
+                ))
+        );
 
         // Put additional params to auth
         HttpUrl url = originalHttpUrl.newBuilder()
-                .addQueryParameter("key", KP_SECRET)
                 .addQueryParameter("uuid", KP_UUID)
+                .addQueryParameter("key", encodedKey)
                 .build();
 
         Request request = chain.request();
@@ -34,12 +47,13 @@ public class KinopoiskRequestInterceptor implements Interceptor {
         // Generate user token
         Random rand = new Random();
         int clientToken = rand.nextInt((9999 - 1) + 1) + 1;
-        String clientId = DigestUtils.md5Hex(String.valueOf(clientToken));
+        String clientId = new String(Hex.encodeHex(DigestUtils.md5(String.valueOf(clientToken))));
+
 
         // Generate req date
         Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("H:i m.d.Y");
-        String clientDate = dateFormat.format(dateFormat.format(date));
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm MM.dd.yyyy");
+        String clientDate = dateFormat.format(date);
 
 
         // Put additional headers to look like KP client
