@@ -44,7 +44,7 @@ public class KinopoiskRequestInterceptor implements Interceptor {
 
         // Put additional headers to look like KP client
         request = request.newBuilder()
-                .addHeader("Android-Api-Version", "android")
+                .addHeader("Android-Api-Version", "22")
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent", "Android client (5.1 / api22), ru.kinopoisk/3.7.0 (45)")
                 .addHeader("countryID", "2")
