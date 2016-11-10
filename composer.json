@@ -1,0 +1,23 @@
+{
+    "name": "wielski/KinopoiskApi",
+    "description": "Kinopoisk API PHP SDK",
+    "keywords": ["kinopoisk"],
+    "homepage": "http://kinopoisk.cf/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrzej Wielski",
+            "email": "wielski@bk.ru",
+            "homepage": "http://vk.com/wielski"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "wielski\\KinopoiskApi\\": "src/",
+        }
+    },
+    "minimum-stability": "stable"
+}
