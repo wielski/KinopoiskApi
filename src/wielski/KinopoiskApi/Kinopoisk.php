@@ -214,7 +214,9 @@ Class Kinopoisk
     ));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-		return $page;
+		$out = curl_exec($ch);
+    curl_close($ch);
+		return $out;
 	}
 
 	public function key($method, $options)
