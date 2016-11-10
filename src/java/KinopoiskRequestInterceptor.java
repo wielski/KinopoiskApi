@@ -55,6 +55,7 @@ public class KinopoiskRequestInterceptor implements Interceptor {
                 .addHeader("Cache-Control", "max-stale=0")
                 .addHeader("Accept-Encoding", "gzip")
                 .addHeader("Cookie", "user_country=ru")
+                .url(url)
                 .build();
         Response response = chain.proceed(request);
         return response;
