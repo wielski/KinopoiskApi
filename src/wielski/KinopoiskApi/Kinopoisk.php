@@ -4,8 +4,14 @@ namespace wielski\KinopoiskApi;
 
 Class Kinopoisk
 {
+  private $KP_APIROOT = 'https://ext.kinopoisk.ru/';
   private $KP_APIURL = 'https://ext.kinopoisk.ru/ios/3.11.0/';
   private $KP_SECRET = 'a17qbcw1du0aedm';
+
+  private $cookies = 'cookies.txt';
+  private $uuid = '84e8b92499a32a3d0d8ea956e6a05d76';
+  private $clientId = '55decdcf6d4cd1bcaa1b3856';
+
 	private $methods = array(
 		'getBestFilms' => 'getBestFilmsList',
 		/* Информация фильмов */
@@ -51,6 +57,8 @@ Class Kinopoisk
 	);
 
 	public function __construct(){
+    $this->checkForUpdate();
+
     $this->customFunctions = array(
       'getPopularIndex'
     );
@@ -152,7 +160,7 @@ Class Kinopoisk
 		if(!empty($this->customOptions[$method])){
 			$options = array_merge($options, $this->customOptions[$method]($options));
 		}
-		$options = array_merge($options, ['uuid' => 'b551edb50f87445ba338f307a2e6baee']);
+		$options = array_merge($options, ['uuid' => $this->uuid]);
 
 		if (!empty($this->customOptions[$method])) {
 			$options = array_merge($options, $this->customOptions[$method]($options));
@@ -197,13 +205,46 @@ Class Kinopoisk
 		}
 
 		$ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Android client (5.0 / api21), ru.kinopoisk/3.11.2 (27) (gzip)');
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 6);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
       'device:android',
       'Android-Api-Version:22',
       'countryID:2',
-      'ClientId:'.md5(rand(0, 99999)),
+      'ClientId:'.$this->clientId,
+      'clientDate:'.date('H:i m.d.Y'),
+      'cityID:2',
+      'Image-Scale:3',
+      'Cache-Control:max-stale=0',
+      'User-Agent:Android client (5.1 / api22), ru.kinopoisk/3.7.0 (45)',
+      'Accept-Encoding:gzip'
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookies);
+    curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookies);
+
+		$out = curl_exec($ch);
+    curl_close($ch);
+		return $out;
+	}
+
+  public function checkForUpdate(){
+    $options = [
+      'appVersion' => '3.11.0',
+      'uuid' => $this->uuid
+    ];
+    $key = $this->key('check-new-version.php', $options);
+    $options['key'] = $key;
+
+    $query = http_build_query($options);
+		$url = $this->KP_APIROOT . 'ios/check-new-version.php?' . $query;
+
+		$ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'device:android',
+      'Android-Api-Version:22',
+      'countryID:2',
+      'ClientId:'.$this->clientId,
       'clientDate:'.date('H:i m.d.Y'),
       'cityID:2',
       'Image-Scale:3',
@@ -213,11 +254,11 @@ Class Kinopoisk
       'Cookie:user_country=ru'
     ));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookies);
+    curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookies);
 
 		$out = curl_exec($ch);
-    curl_close($ch);
-		return $out;
-	}
+  }
 
 	public function key($method, $options)
 	{
