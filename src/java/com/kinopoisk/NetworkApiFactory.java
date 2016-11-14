@@ -1,7 +1,5 @@
 package com.kinopoisk;
 
-import android.content.Context;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -21,14 +19,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class NetworkApiFactory {
 
-    OkHttpClient provideHttpClient(Context context) {
-
-        // Enable caching for OkHttp
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        Cache cache = new Cache(context.getCacheDir(), cacheSize);
-
+    OkHttpClient provideHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
-                .cache(cache)
                 .connectTimeout(30, TimeUnit.SECONDS);
 
 
