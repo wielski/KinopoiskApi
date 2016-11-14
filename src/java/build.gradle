@@ -4,4 +4,5 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'commons-codec:commons-codec:1.8'
+    compile "com.squareup.okhttp3:okhttp-urlconnection:3.2.0"
 }
