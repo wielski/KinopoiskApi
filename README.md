@@ -1,3 +1,6 @@
+> :warning: This package is deprecated.
+> Please use https://github.com/siqwell/kinopoisk
+
 <img src="https://github.com/wielski/KinopoiskApi/blob/master/logo.png?raw=true">
 
 Kinopoisk API Sdk
